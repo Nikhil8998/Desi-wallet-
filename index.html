@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin Panel</title></head>
+<body>
+<h2>🔒 Admin - Confirm Transactions</h2>
+<ul id="txnList"></ul>
+<script>
+  async function loadTxns() {
+    const res = await fetch('/admin/transactions');
+    const txns = await res.json();
+    document.getElementById("txnList").innerHTML = txns.map(t => `
+      <li>${t.name} | ₹${t.amount} | ${t.status}
+        <button onclick="confirmTxn(${t.id})">Confirm</button>
+      </li>
+    `).join('');
+  }
+  async function confirmTxn(id) {
+    await fetch('/admin/confirm', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ id })
+    });
+    loadTxns();
+  }
+  loadTxns();
+</script>
+</body>
+</html>
