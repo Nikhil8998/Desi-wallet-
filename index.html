@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head><title>Admin Panel</title></head>
+<head><title>UPI Recharge</title></head>
 <body>
-<h2>🔒 Admin - Confirm Transactions</h2>
-<ul id="txnList"></ul>
+<h2>💰 Add Funds to Wallet</h2>
+<form id="rechargeForm" enctype="multipart/form-data">
+  <input type="text" id="name" placeholder="Your Name" required /><br/>
+  <input type="text" id="upi" placeholder="Your UPI ID" required /><br/>
+  <input type="number" id="amount" placeholder="₹ Amount" required /><br/>
+  <input type="file" id="screenshot" accept="image/*" required /><br/>
+  <button type="submit">Submit</button>
+</form>
 <script>
-  async function loadTxns() {
-    const res = await fetch('/admin/transactions');
-    const txns = await res.json();
-    document.getElementById("txnList").innerHTML = txns.map(t => `
-      <li>${t.name} | ₹${t.amount} | ${t.status}
-        <button onclick="confirmTxn(${t.id})">Confirm</button>
-      </li>
-    `).join('');
-  }
-  async function confirmTxn(id) {
-    await fetch('/admin/confirm', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ id })
-    });
-    loadTxns();
-  }
-  loadTxns();
+  document.getElementById("rechargeForm").onsubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", name.value);
+    formData.append("upi", upi.value);
+    formData.append("amount", amount.value);
+    formData.append("screenshot", screenshot.files[0]);
+
+    await fetch("/upload", { method: "POST", body: formData });
+    alert("Recharge Request Submitted!");
+  };
 </script>
 </body>
 </html>
